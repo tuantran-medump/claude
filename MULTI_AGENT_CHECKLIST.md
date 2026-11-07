@@ -20,8 +20,11 @@ File này là **Checklist bỏ túi** dành cho bạn trước khi bắt đầu 
   - `tests/` $\rightarrow$ Địa bàn của **Codex** (Unit/Integration/E2E Tests).
 - [ ] **4. Chốt "Hợp đồng Dữ liệu" (Types/Interfaces) Trước khi Tách Nhánh**
   - Luôn tạo file `src/types/index.ts` định nghĩa trước kiểu dữ liệu (API Request/Response, Props) và commit vào `main`. Khi có chung file `types`, một agent làm Frontend và một agent làm Backend sẽ khớp nhau 100% lúc ghép lại.
-- [ ] **5. Kiểm tra Lệnh Chạy trên Terminal**
-  - Ghi rõ lệnh chạy thực tế vào `AGENTS.md` (ví dụ trên Windows PowerShell dùng `npm.cmd run build` thay vì `npm run build` nếu bị chặn `.ps1`) để các agent không mất token tự mò lỗi môi trường.
+- [ ] **5. Luôn dùng đuôi `.cmd` trên Windows PowerShell (Bảo mật cao — Không mở khóa `.ps1`)**
+  - Giữ nguyên khóa `.ps1` của Windows để an toàn tuyệt đối.
+  - Khi gõ lệnh trên Terminal của Orca hoặc cấu hình cho Agent, luôn thêm `.cmd`:
+    - Chạy Node/NPM: `npm.cmd run dev`, `npm.cmd run build`, `npm.cmd run typecheck`, `npm.cmd test`, `npx.cmd ...`
+    - Gọi Agent CLI: `claude.cmd`, `codex.cmd`
 
 ---
 
@@ -41,9 +44,10 @@ File này là **Checklist bỏ túi** dành cho bạn trước khi bắt đầu 
 Khi **Claude Pro** (hoặc bất kỳ agent nào) báo hết limit giữa chừng trên Orca:
 
 1. **Đừng đóng Worktree đó** (vì code đang sửa dở vẫn nằm nguyên trong ổ cứng của worktree).
-2. Mở terminal của **Agent dự phòng** ngay tại thư mục Worktree đó:
-   - Nếu đang làm **Backend / Logic / Refactor / Sửa lỗi** $\rightarrow$ Bật **Codex (`codex`)**.
-   - Nếu đang làm **Giao diện UI / Ghép trang / Full-stack** $\rightarrow$ Bật **Antigravity (`agy`)**.
+2. Mở terminal của **Agent dự phòng** ngay tại thư mục Worktree đó (dùng đuôi `.cmd` để không dính chặn `.ps1`):
+   - Nếu đang làm **Backend / Logic / Refactor / Sửa lỗi** $\rightarrow$ Bật **Codex (`codex.cmd`)**.
+   - Nếu đang làm **Giao diện UI / Ghép trang / Full-stack** $\rightarrow$ Bật **Antigravity (`agy.cmd` hoặc trên IDE)**.
+   - Nếu cần gọi **Claude Code** $\rightarrow$ Gõ **`claude.cmd`**.
 3. Paste đúng câu lệnh này:
    ```text
    Tiếp quản công việc đang dở: Hãy đọc HANDOFF.md, chạy git status và git diff để nắm phần code agent trước đang viết dở và hoàn thiện nốt.

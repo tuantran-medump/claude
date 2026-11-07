@@ -52,8 +52,13 @@ Khi người dùng yêu cầu tiếp quản công việc từ Agent trước (do
   - `src/hooks/` — Tầng State & Client Hooks (**Claude / Antigravity** phụ trách).
   - `src/server/` & `src/app/api/` — Tầng Backend Services & API (**Claude / Codex** phụ trách).
   - `tests/` — Tầng Unit & Integration Tests (**Codex** phụ trách chính).
-- **Lệnh chạy trên Windows PowerShell**:
-  - Sử dụng `npm.cmd run dev`, `npm.cmd run build`, `npm.cmd run typecheck`, `npm.cmd test` (tránh lỗi PowerShell ExecutionPolicy với `npm.ps1`).
+- **Quy tắc Bảo mật PowerShell (BẮT BUỘC dùng `.cmd`, KHÔNG chạy `.ps1`)**:
+  - Máy giữ nguyên chế độ khóa `.ps1` (`Restricted`) để bảo mật.
+  - **TUYỆT ĐỐI KHÔNG** chạy `Set-ExecutionPolicy` hoặc cố gọi file `.ps1`.
+  - Mọi lệnh CLI trên Windows PowerShell **BẮT BUỘC** gọi trực tiếp qua đuôi `.cmd`:
+    - `npm.cmd install`, `npm.cmd run dev`, `npm.cmd run build`, `npm.cmd run typecheck`, `npm.cmd test`
+    - `npx.cmd <package>`
+    - `claude.cmd`, `codex.cmd`
 - **Git & Orca Worktrees**:
   - Mỗi tính năng/nhiệm vụ chạy trên một nhánh/worktree riêng của Orca.
   - Commit nhỏ, rõ nghĩa khi hoàn thành từng mốc ổn định.
