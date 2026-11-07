@@ -7,31 +7,37 @@
 ---
 
 ## 1. Nhiệm vụ Hiện tại (Active Task)
-- **Tên tính năng / Task**: `[Chưa có task đang chạy — Hãy ghi mục tiêu tính năng vào đây]`
+- **Tên tính năng / Task**: `Đã hoàn tất khởi tạo khung Web App & Sổ tay Đa Agent (Sẵn sàng cho tính năng mới)`
 - **Nhánh / Worktree**: `main`
-- **Agent phụ trách chính**: `Antigravity / Claude / Codex`
-- **Agent dự phòng (Backup)**: `Codex (Backend/Test) | Antigravity (UI/Full-stack)`
+- **Agent phụ trách chính**: `Antigravity (Gemini Pro)`
+- **Agent dự phòng (Backup)**: `Codex (GPT Pro) | Antigravity (Gemini Pro)`
 
 ---
 
 ## 2. Tóm tắt Ngữ cảnh (Context Brief — Do Antigravity chuẩn bị cho Claude/Codex)
 - **Các file liên quan chính**:
-  - `(Ví dụ: src/app/page.tsx, src/lib/api.ts)`
+  - `MULTI_AGENT_CHECKLIST.md`: Sổ tay ghi nhớ quy trình phối hợp 3 Agent.
+  - `src/types/index.ts`: Định nghĩa kiểu dữ liệu dùng chung (`AgentTask`, `AgentName`, `TaskStatus`).
+  - `src/server/taskService.ts` & `src/app/api/tasks/route.ts`: Tầng Backend/Service.
+  - `src/hooks/useAgentTasks.ts`: Tầng State/Hooks.
+  - `src/components/ui/AgentDashboard.tsx` & `src/app/page.tsx`: Tầng Giao diện (UI).
+  - `tests/taskService.test.ts`: Bộ Unit Test Vitest.
 - **Ràng buộc / Thiết kế cần tuân thủ**:
-  - `(Ghi ngắn gọn API schema, props hoặc logic chính tại đây để Agent sau không phải quét lại cả repo)`
+  - Trên Windows PowerShell hiện tại, dùng `npm.cmd` và `npx.cmd` thay vì `npm`/`npx`.
+  - TypeScript `strict: true`.
 
 ---
 
 ## 3. Tiến độ Chi tiết (Checklist)
-- [ ] Bước 1: Thiết kế cấu trúc / Chuẩn bị ngữ cảnh
-- [ ] Bước 2: Triển khai Core Logic / API
-- [ ] Bước 3: Xây dựng Giao diện (UI Components) & Ghép nối
-- [ ] Bước 4: Chạy Build, Viết Test & Review (Giao cho Codex / Antigravity)
+- [x] Bước 1: Thiết kế cấu trúc / Chuẩn bị ngữ cảnh (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `HANDOFF.md`)
+- [x] Bước 2: Soạn sổ tay ghi nhớ `MULTI_AGENT_CHECKLIST.md` cho người dùng
+- [x] Bước 3: Khởi tạo khung Web App phân tầng (`src/app`, `src/components/ui`, `src/hooks`, `src/server`, `tests`)
+- [x] Bước 4: Cài đặt dependencies, kiểm tra `typecheck` + `test` (3/3 passed) và commit lên `main`
 
 ---
 
 ## 4. Trạng thái Đang làm dở (Current State / In-Progress)
-- **File vừa hoàn thành**: `Không có`
+- **File vừa hoàn thành**: Toàn bộ bộ khung dự án Web App & `MULTI_AGENT_CHECKLIST.md`
 - **File đang sửa dở**: `Không có`
 - **Ghi chú bàn giao cho Agent kế tiếp**:
-  - `Sẵn sàng nhận nhiệm vụ mới.`
+  - Dự án đã pass `npm.cmd run typecheck` và `npm.cmd test`. Sẵn sàng tách worktree trên Orca cho tính năng tiếp theo.

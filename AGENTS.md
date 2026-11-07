@@ -44,9 +44,16 @@ Khi người dùng yêu cầu tiếp quản công việc từ Agent trước (do
 
 ---
 
-## 3. Quy chuẩn Code chung cho Web App
+## 3. Quy chuẩn Code chung & Cấu trúc Thư mục Web App
 - **Ngôn ngữ & Kiểu dữ liệu**: Ưu tiên TypeScript chặt chẽ (`strict: true`), hạn chế tối đa `any`.
-- **Cấu trúc Component & Module**: Tách biệt rõ tầng giao diện (`UI/Presentation`), tầng trạng thái/hooks (`State/Hooks`) và tầng dữ liệu/API (`Services/Server`).
+- **Cấu trúc Thư mục Phân tầng (Tránh xung đột file khi chạy song song)**:
+  - `src/types/index.ts` — Hợp đồng dữ liệu chung (Interfaces/Types). Chốt file này trước khi tách nhánh.
+  - `src/components/ui/` & `src/app/` — Tầng Giao diện & Routing (**Antigravity** phụ trách chính).
+  - `src/hooks/` — Tầng State & Client Hooks (**Claude / Antigravity** phụ trách).
+  - `src/server/` & `src/app/api/` — Tầng Backend Services & API (**Claude / Codex** phụ trách).
+  - `tests/` — Tầng Unit & Integration Tests (**Codex** phụ trách chính).
+- **Lệnh chạy trên Windows PowerShell**:
+  - Sử dụng `npm.cmd run dev`, `npm.cmd run build`, `npm.cmd run typecheck`, `npm.cmd test` (tránh lỗi PowerShell ExecutionPolicy với `npm.ps1`).
 - **Git & Orca Worktrees**:
   - Mỗi tính năng/nhiệm vụ chạy trên một nhánh/worktree riêng của Orca.
   - Commit nhỏ, rõ nghĩa khi hoàn thành từng mốc ổn định.
