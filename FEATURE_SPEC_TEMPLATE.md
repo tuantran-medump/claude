@@ -1,40 +1,31 @@
-# 📝 FEATURE_SPEC_TEMPLATE.md — Mẫu Mô Tả Tính Năng & Chia Việc Đa Agent
+# 📝 FEATURE_SPEC_TEMPLATE.md — Mẫu Đặc Tả Tính Năng Game HTML (v2.0)
 
-> **Cách dùng**: Khi bạn chuẩn bị làm một tính năng lớn, bạn có thể điền nhanh vào khung dưới đây (hoặc copy đưa cho **Antigravity** điền giúp), sau đó lưu nội dung vào `HANDOFF.md`.
-
----
-
-## 1. Tổng quan Tính năng (Feature Overview)
-- **Tên tính năng**: `[Ví dụ: Quản lý Giỏ hàng & Thanh toán]`
-- **Mục tiêu người dùng (User Story)**: `[Người dùng có thể thêm sản phẩm vào giỏ, tính tổng tiền tự động và bấm thanh toán]`
-- **Nhánh Git / Worktree trên Orca**: `feat/[ten-tinh-nang]`
+> **Cách dùng**: Điền nhanh hoặc bảo **Antigravity (Điều phối viên chính)** điền mẫu này vào `HANDOFF.md` trước khi giao việc cho **Codex (Code chính)**.
 
 ---
 
-## 2. Hợp đồng Dữ liệu Chung (`src/types/index.ts`)
-*(Luôn chốt phần này đầu tiên để Claude, Codex và Antigravity code khớp nhau 100%)*
-- **Interfaces / Types cần thêm hoặc sửa**:
-  ```ts
-  // Ví dụ:
-  // export interface CartItem { id: string; name: string; price: number; quantity: number; }
-  ```
+## 1. Thông tin Tính năng Game
+- **Tên tính năng / Cơ chế mới**: `[Ví dụ: Thẻ bài Bom Nổ Lan 3x3 & Ô Bẫy trên Lưới]`
+- **Chế độ sử dụng Claude**: `[ ] Có gọi Claude chốt Types (10%)` | `[x] Bật Zero-Claude Failsafe (Chỉ dùng Antigravity + Codex)`
+- **Modules trong `toolbox/` cần tái sử dụng**:
+  - [`toolbox/modules/soundSynth.ts`](./toolbox/modules/soundSynth.ts)
+  - [`toolbox/modules/storageManager.ts`](./toolbox/modules/storageManager.ts)
+  - [`toolbox/modules/tweenParticles.ts`](./toolbox/modules/tweenParticles.ts)
 
 ---
 
-## 3. Phân bổ Công việc cho 3 Agent
+## 2. Phân việc Cụ thể theo Đúng Tỷ Trọng Mới
 
-### A. Phần của Antigravity (`Gemini Pro` — 50% tải)
-- [ ] Cập nhật `src/types/index.ts` và điền `Context Brief` vào `HANDOFF.md`.
-- [ ] Xây dựng UI Components tại `src/components/ui/[TenComponent].tsx`.
-- [ ] Tạo/cập nhật trang tại `src/app/[duong-dan]/page.tsx`.
-- [ ] Ghép nối UI với Hooks/API và kiểm tra trực tiếp trên trình duyệt.
+### A. Claude Code (`≤10%` — Hoặc Antigravity làm thay nếu bật Failsafe)
+- [ ] Cập nhật kiểu dữ liệu trong `src/types/game.ts`.
+- [ ] Cập nhật công thức cân bằng trong `toolbox/templates/GAME_BALANCE_SPEC.md`.
 
-### B. Phần của Claude Code (`Claude Pro` — 15% tải • Ưu tiên việc khó)
-- [ ] Thiết kế kiến trúc / Custom Hook phức tạp tại `src/hooks/[useTenHook].ts` hoặc Core Business Logic.
-- [ ] Tinh chỉnh các đoạn logic có nhiều điều kiện ràng buộc khó.
-- *(Lưu ý: Không tự quét cả repo, không chạy vòng lặp build/test).*
+### B. Codex (`65%` — Main Coder & QA)
+- [ ] Viết toàn bộ hàm xử lý logic trong `src/game/engine.ts`.
+- [ ] Viết Unit Tests kiểm tra mọi trường hợp (bao gồm biên lưới, hết năng lượng, Undo) trong `tests/`.
+- [ ] Chạy `toolbox\scripts\verify-all.cmd` đảm bảo 0 lỗi.
 
-### C. Phần của Codex (`GPT Pro` — 35% tải • Heavy Lifter & QA)
-- [ ] Viết Backend Service tại `src/server/[tenService].ts` và API Route tại `src/app/api/[duong-dan]/route.ts`.
-- [ ] Viết bộ Unit/Integration Tests tại `tests/[tenService].test.ts`.
-- [ ] Chạy vòng lặp `npm.cmd run typecheck` $\rightarrow$ `npm.cmd test` $\rightarrow$ sửa sạch lỗi và Review `git diff`.
+### C. Antigravity (`25%` — Main Orchestrator & UI/Canvas)
+- [ ] Vẽ hiệu ứng hiển thị lên HTML5 Canvas & HUD trong `src/components/ui/`.
+- [ ] Kích hoạt âm thanh `soundSynth` + hạt `CanvasJuiceManager`.
+- [ ] Đối chiếu toàn bộ 10 mục trong Checklist của `PLAYBOOK.md` trước khi báo cáo.

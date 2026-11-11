@@ -4,19 +4,19 @@ import type { AgentTask, AgentName } from "@/types";
 import { useAgentTasks } from "@/hooks/useAgentTasks";
 
 const AGENT_BADGE: Record<AgentName, { label: string; quota: string; color: string }> = {
-  antigravity: {
-    label: "Antigravity (Gemini Pro)",
-    quota: "50% tải • UI & Orchestrator",
-    color: "bg-blue-500/15 text-blue-300 border-blue-500/30",
-  },
   codex: {
     label: "Codex (GPT Pro)",
-    quota: "35% tải • Backend & Test Loop",
+    quota: "65% tải • Main Coder (Game Engine, Grid/Merge Logic & Unit Tests)",
     color: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  },
+  antigravity: {
+    label: "Antigravity (Gemini Pro)",
+    quota: "25% tải • Main Orchestrator (Playbook, Toolbox, Canvas UI & Gatekeeper)",
+    color: "bg-blue-500/15 text-blue-300 border-blue-500/30",
   },
   claude: {
     label: "Claude Code (Claude Pro)",
-    quota: "15% tải • Architect (Tiết kiệm Token)",
+    quota: "≤10% tải • Architect-Only (Chốt Types/Balance đầu kỳ + Zero-Claude Failsafe)",
     color: "bg-amber-500/15 text-amber-300 border-amber-500/30",
   },
 };
@@ -29,7 +29,7 @@ export function AgentDashboard({ initialTasks }: AgentDashboardProps) {
   const { tasks, cycleTaskStatus } = useAgentTasks(initialTasks);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-3">
         {(Object.keys(AGENT_BADGE) as AgentName[]).map((agentKey) => {
           const info = AGENT_BADGE[agentKey];
@@ -48,10 +48,10 @@ export function AgentDashboard({ initialTasks }: AgentDashboardProps) {
       <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-slate-100">
-            Bảng Điều Phối Nhiệm Vụ (Nhấn vào trạng thái để đổi)
+            Tiến Độ Điều Phối Theo PLAYBOOK.md (Nhấn trạng thái để đổi)
           </h2>
           <span className="text-xs text-slate-400">
-            Đồng bộ quy chuẩn với HANDOFF.md
+            Đồng bộ với HANDOFF.md & toolbox/
           </span>
         </div>
 
@@ -66,7 +66,7 @@ export function AgentDashboard({ initialTasks }: AgentDashboardProps) {
                 <div className="mt-1 flex flex-wrap gap-2 text-xs text-slate-400">
                   <span>Phụ trách: <strong className="text-slate-200">{task.assignedTo}</strong></span>
                   <span>•</span>
-                  <span>Backup khi hết token: <strong className="text-amber-300">{task.backupAgent}</strong></span>
+                  <span>Failsafe Backup: <strong className="text-amber-300">{task.backupAgent}</strong></span>
                   <span>•</span>
                   <span>Tầng: {task.layer}</span>
                 </div>

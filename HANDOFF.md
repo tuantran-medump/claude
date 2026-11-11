@@ -1,47 +1,47 @@
-# HANDOFF.md — Bảng Trạng thái & Chuyển giao Công việc (State-on-Disk)
+# HANDOFF.md — Bảng Trạng thái & Chuyển giao Công việc (State-on-Disk v2.0)
 
-> **Hướng dẫn sử dụng nhanh khi 1 Agent hết token trên Orca:**
-> Mở Agent dự phòng (Codex hoặc Antigravity) ngay trong cùng Worktree và nhập:
-> `"Tiếp quản công việc đang dở: Đọc HANDOFF.md, chạy git status và git diff để nắm phần code đang sửa và làm tiếp."`
+> **Hướng dẫn Failsafe nhanh khi 1 Agent hết token trên Orca:**
+> Mở Agent dự phòng (**Codex** hoặc **Antigravity**) ngay trong cùng Worktree và chạy:
+> `"Chế độ Failsafe Takeover: Hãy chạy toolbox\scripts\handoff-status.cmd để đọc trạng thái Git diff và HANDOFF.md hiện tại, sau đó hoàn thiện nốt và kiểm tra bằng toolbox\scripts\verify-all.cmd."`
 
 ---
 
 ## 1. Nhiệm vụ Hiện tại (Active Task)
-- **Tên tính năng / Task**: `Đã hoàn tất bộ tài liệu điều phối, Playbook câu lệnh & khung Web App (Sẵn sàng cho tính năng mới)`
+- **Tên tính năng / Task**: `Hoàn thiện Multi-Agent Starter Kit v2.0 (Codex Code Chính 65% • Antigravity Điều Phối 25% • Claude Phụ ≤10% + Failsafe), Toolbox tái sử dụng & Game HTML 2D Grid/Merge + Card Roguelike`
 - **Nhánh / Worktree**: `main`
-- **Agent phụ trách chính**: `Antigravity (Gemini Pro)`
-- **Agent dự phòng (Backup)**: `Codex (GPT Pro) | Antigravity (Gemini Pro)`
+- **Agent điều phối chính**: `Antigravity (Gemini Pro — 25%)`
+- **Agent code chính**: `Codex (GPT Pro — 65%)`
+- **Agent phụ (Architect đầu kỳ)**: `Claude (Claude Pro — ≤10% + Zero-Claude Failsafe)`
 
 ---
 
-## 2. Tóm tắt Ngữ cảnh (Context Brief — Do Antigravity chuẩn bị cho Claude/Codex)
-- **Bộ file điều phối & sổ tay cho người dùng**:
-  - `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `HANDOFF.md`: Bộ quy tắc tự động nạp cho 3 Agent.
-  - `PROMPTS_PLAYBOOK.md`: Bộ câu lệnh Copy-Paste giao việc cho Antigravity, Claude và Codex theo từng bước.
-  - `FEATURE_SPEC_TEMPLATE.md`: Khung mẫu mô tả tính năng & chia việc 3 Agent.
-  - `MULTI_AGENT_CHECKLIST.md`: Sổ tay ghi nhớ quy trình phối hợp 3 Agent trên Orca.
-- **Các file code chính của Web App**:
-  - `src/types/index.ts`: Định nghĩa kiểu dữ liệu dùng chung (`AgentTask`, `AgentName`, `TaskStatus`).
-  - `src/server/taskService.ts` & `src/app/api/tasks/route.ts`: Tầng Backend/Service.
-  - `src/hooks/useAgentTasks.ts`: Tầng State/Hooks.
-  - `src/components/ui/AgentDashboard.tsx` & `src/app/page.tsx`: Tầng Giao diện (UI).
-  - `tests/taskService.test.ts`: Bộ Unit Test Vitest.
-- **Ràng buộc / Thiết kế cần tuân thủ**:
-  - Trên Windows PowerShell, luôn dùng `npm.cmd`, `npx.cmd`, `claude.cmd`, `codex.cmd` (không chạy `.ps1`).
-  - TypeScript `strict: true`.
+## 2. Tóm tắt Ngữ cảnh (Context Brief)
+- **Playbook & Bộ Kit Điều phối v2.0**:
+  - [`PLAYBOOK.md`](./PLAYBOOK.md): Mục tiêu, quy trình 5 bước, quy định bắt buộc dùng Toolbox, Failsafe 3 lớp và Checklist Nghiệm thu 10 tiêu chuẩn.
+  - [`AGENTS.md`](./AGENTS.md), [`CLAUDE.md`](./CLAUDE.md), [`GEMINI.md`](./GEMINI.md), [`PROMPTS_PLAYBOOK.md`](./PROMPTS_PLAYBOOK.md), [`FEATURE_SPEC_TEMPLATE.md`](./FEATURE_SPEC_TEMPLATE.md), [`MULTI_AGENT_CHECKLIST.md`](./MULTI_AGENT_CHECKLIST.md).
+- **Toolbox Tái sử dụng (`toolbox/`)**:
+  - Danh mục: [`toolbox/docs/TOOLBOX_INDEX.md`](./toolbox/docs/TOOLBOX_INDEX.md)
+  - Scripts: [`toolbox/scripts/verify-all.cmd`](./toolbox/scripts/verify-all.cmd), [`toolbox/scripts/handoff-status.cmd`](./toolbox/scripts/handoff-status.cmd), [`toolbox/scripts/new-worktree.cmd`](./toolbox/scripts/new-worktree.cmd)
+  - Modules: [`toolbox/modules/soundSynth.ts`](./toolbox/modules/soundSynth.ts), [`toolbox/modules/storageManager.ts`](./toolbox/modules/storageManager.ts), [`toolbox/modules/tweenParticles.ts`](./toolbox/modules/tweenParticles.ts)
+  - Templates: [`toolbox/templates/GAME_BALANCE_SPEC.md`](./toolbox/templates/GAME_BALANCE_SPEC.md)
+- **Code Game HTML 2D (Grid/Merge + Card Deckbuilder Roguelike)**:
+  - Types: [`src/types/game.ts`](./src/types/game.ts)
+  - Core Engine: [`src/game/engine.ts`](./src/game/engine.ts)
+  - Canvas UI: [`src/components/ui/TacticalGridGame.tsx`](./src/components/ui/TacticalGridGame.tsx)
+  - Unit Tests: [`tests/gameEngine.test.ts`](./tests/gameEngine.test.ts) & [`tests/taskService.test.ts`](./tests/taskService.test.ts)
 
 ---
 
-## 3. Tiến độ Chi tiết (Checklist)
-- [x] Bước 1: Thiết kế cấu trúc / Chuẩn bị ngữ cảnh (`AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `HANDOFF.md`)
-- [x] Bước 2: Soạn sổ tay `MULTI_AGENT_CHECKLIST.md`, bộ câu lệnh `PROMPTS_PLAYBOOK.md` & mẫu `FEATURE_SPEC_TEMPLATE.md`
-- [x] Bước 3: Khởi tạo khung Web App phân tầng (`src/app`, `src/components/ui`, `src/hooks`, `src/server`, `tests`)
-- [x] Bước 4: Kiểm tra `typecheck` + `test` (3/3 passed), commit và push lên GitHub `origin/main`
+## 3. Tiến độ Chi tiết theo Playbook (Checklist)
+- [x] Bước 1: Phỏng vấn người dùng & tổng hợp đầy đủ vào `PLAYBOOK.md`
+- [x] Bước 2: Xây dựng `toolbox/` (scripts, reusable game modules, templates, index) và gắn link quy định vào `PLAYBOOK.md`
+- [x] Bước 3: Triển khai Game HTML 2D Grid/Merge + Card Roguelike và đối chiếu 10/10 tiêu chuẩn trong Checklist của `PLAYBOOK.md`
+- [x] Bước 4: Đóng gói bản Portable Starter Kit v2.0 ra `C:\Users\Admin\orca\multi-agent-starter-kit` & `.zip`
 
 ---
 
 ## 4. Trạng thái Đang làm dở (Current State / In-Progress)
-- **File vừa hoàn thành**: `PROMPTS_PLAYBOOK.md`, `FEATURE_SPEC_TEMPLATE.md`
+- **File vừa hoàn thành**: Toàn bộ `PLAYBOOK.md`, `toolbox/*`, `src/game/engine.ts`, `src/components/ui/TacticalGridGame.tsx`, `tests/gameEngine.test.ts`
 - **File đang sửa dở**: `Không có`
 - **Ghi chú bàn giao cho Agent kế tiếp**:
-  - Đã sẵn sàng 100% để bắt đầu tính năng mới. Mở `PROMPTS_PLAYBOOK.md` và copy câu lệnh Bước 1 để khởi động tính năng tiếp theo.
+  - Sẵn sàng mở rộng thêm thẻ bài mới, hiệu ứng Boss đặc biệt, hoặc bản đồ Roguelike theo nhánh.

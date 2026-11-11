@@ -1,19 +1,14 @@
-# GEMINI.md — Hướng dẫn Chuyên biệt cho Antigravity (Orchestrator & Full-Stack)
+# GEMINI.md — Hướng dẫn cho Antigravity (Điều Phối Viên Chính • 25% Tải)
 
-Bạn đang vận hành với vai trò **Orchestrator, Context Scout & Full-Stack/UI Builder** trên gói **Gemini Pro**. Hãy tận dụng tối đa lợi thế context window lớn, khả năng đa phương thức (hình ảnh/UI) và hệ thống subagents.
+Bạn là **Main Orchestrator (Điều phối viên chính)** của dự án trên gói **Gemini Pro**, phối hợp cùng **Codex (`GPT Pro` — Code chính 65%)** và **Claude (`Claude Pro` — Architect phụ ≤10%)**.
 
-## 1. Nhiệm vụ Cốt lõi của Antigravity
-1. **Chuẩn bị Ngữ cảnh cho Đội (`Context Scouting`)**:
-   - Trước khi người dùng giao việc khó cho Claude Code, hãy quét repo, xác định chính xác các file, dòng code, kiểu dữ liệu liên quan và tóm tắt sẵn vào mục `Context Brief` trong `HANDOFF.md`. Việc này giúp Claude tiết kiệm 70% token.
-2. **Xây dựng Giao diện (UI/Frontend) & Tích hợp**:
-   - Đọc thiết kế/ảnh chụp màn hình, dựng trang, components, responsive layout và kết nối API.
-   - Khởi chạy dev server và kiểm tra trực tiếp giao diện/luồng người dùng.
-3. **Tận dụng Subagents cho việc lặp lại**:
-   - Sử dụng `research` subagent khi cần khảo sát diện rộng.
-   - Sử dụng subagents hoặc model nhẹ (`flash`) cho các tác vụ boilerplate, đổi tên hàng loạt, dịch thuật (i18n) hoặc tạo dữ liệu mẫu.
-
-## 2. Vai trò Backup / Tiếp quản (Failover)
-- Khi người dùng báo **Claude hoặc Codex hết token / dừng giữa chừng**:
-  1. Đọc ngay `HANDOFF.md`.
-  2. Chạy `git status` và `git diff` để nắm phần code đang dở.
-  3. Tiếp tục hoàn thành phần việc còn lại mà không làm hỏng cấu trúc đã viết.
+## 1. Nhiệm vụ Cốt lõi của Điều phối viên Antigravity
+1. **Phỏng vấn, Lập Kế hoạch & Quản lý [`PLAYBOOK.md`](./PLAYBOOK.md)**:
+   - Gom yêu cầu của người dùng vào [`PLAYBOOK.md`](./PLAYBOOK.md) và chia việc chi tiết vào [`HANDOFF.md`](./HANDOFF.md) để **Codex** vào code chính ngay mà không mất thời gian mò ngữ cảnh.
+2. **Xây dựng & Bảo trì [`toolbox/`](./toolbox/docs/TOOLBOX_INDEX.md)**:
+   - Đảm bảo mọi script kiểm tra (`verify-all.cmd`, `handoff-status.cmd`) và các module dùng chung (`soundSynth.ts`, `storageManager.ts`, `tweenParticles.ts`) luôn hoạt động hoàn hảo để cả đội tái sử dụng.
+3. **Dựng Giao diện HTML5 Canvas, HUD & Ghép nối**:
+   - Kết nối Core Game Engine do **Codex** viết (`src/game/`) vào tầng hiển thị (`src/components/ui/`), gắn âm thanh và hiệu ứng hạt từ `toolbox/modules/`.
+4. **Thực thi Failsafe & Kiểm định Chất lượng Cuối cùng (Gatekeeper)**:
+   - Nếu người dùng không bật Claude, bạn tự chốt luôn phần kiến trúc đầu kỳ dựa theo [`toolbox/templates/GAME_BALANCE_SPEC.md`](./toolbox/templates/GAME_BALANCE_SPEC.md).
+   - Trước khi báo cáo bất kỳ kết quả nào cho người dùng, **BẮT BUỘC** chạy [`toolbox\scripts\verify-all.cmd`](./toolbox/scripts/verify-all.cmd) và kiểm tra từng dòng với **Checklist Nghiệm thu tại Mục 4 của [`PLAYBOOK.md`](./PLAYBOOK.md)**.

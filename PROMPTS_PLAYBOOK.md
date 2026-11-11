@@ -1,76 +1,69 @@
-# 🎯 PROMPTS_PLAYBOOK.md — Bộ Câu Lệnh Copy-Paste Để Phân Việc Cho Antigravity, Claude & Codex
+# 🎯 PROMPTS_PLAYBOOK.md — Bộ Câu Lệnh Copy-Paste Phân Việc v2.0
+*(Antigravity Điều Phối 25% • Codex Code Chính 65% • Claude Phụ ≤10% + Failsafe)*
 
-Mỗi lần bắt đầu code một tính năng mới trên **Orca**, bạn chỉ cần mở file này, **Copy & Paste** đúng câu lệnh tương ứng cho từng Agent (chỉ cần thay phần trong ngoặc vuông `[...]`).
+Mỗi lần làm tính năng mới cho Game HTML trên **Orca**, bạn chỉ cần Copy & Paste đúng câu lệnh dưới đây:
 
 ---
 
-## BƯỚC 1: Giao cho Antigravity (Gemini Pro) — Chuẩn bị & Chia việc
-> **Mục đích**: Để Antigravity quét repo, chốt kiểu dữ liệu (`src/types/index.ts`) và viết sẵn kế hoạch chia việc vào `HANDOFF.md` giúp **Claude không tốn token** mò code.
+## BƯỚC 1: Giao cho Antigravity (Điều phối viên chính) — Lên kế hoạch & Chuẩn bị `HANDOFF.md`
 
-### 📋 Prompt 1A — Khởi động tính năng mới & Chia việc tự động
+### 📋 Prompt 1A — Chuẩn bị tính năng mới (Dùng kèm Claude 10%)
 ```text
-Mình muốn làm tính năng mới: [Mô tả ngắn gọn tính năng bạn muốn làm].
-Hãy thực hiện vai trò Orchestrator:
-1. Quét codebase hiện tại và cập nhật kiểu dữ liệu chung cần thiết vào `src/types/index.ts`.
-2. Điền đầy đủ mục Context Brief và chia Checklist công việc cụ thể cho 3 Agent (Antigravity làm UI, Claude làm Core Architecture/Hooks phức tạp, Codex làm Backend Service & Unit Test) vào file `HANDOFF.md`.
-3. Cho mình biết phần nào bạn làm ngay, và câu lệnh cụ thể để mình giao cho Claude và Codex.
+Mình muốn thêm/sửa tính năng Game HTML: [Mô tả ngắn gọn tính năng].
+Theo đúng `PLAYBOOK.md`:
+1. Hãy chạy `toolbox\scripts\handoff-status.cmd` và cập nhật mục tiêu + Context Brief vào `HANDOFF.md`.
+2. Liệt kê rõ phần việc của Claude (chỉ chốt `src/types/game.ts` & `toolbox/templates/GAME_BALANCE_SPEC.md` trong 1 lượt), phần Code chính của Codex (`src/game/` + `tests/`), và phần UI/Canvas của bạn (`src/components/ui/`).
+```
+
+### 📋 Prompt 1B — Chế độ "Zero-Claude Failsafe" (Tiết kiệm 100% token Claude cho việc khác)
+```text
+Mình muốn làm tính năng Game HTML: [Mô tả ngắn gọn tính năng] ở chế độ Zero-Claude Failsafe (không gọi Claude để tiết kiệm token).
+Theo `PLAYBOOK.md`, bạn hãy tự chốt luôn `src/types/game.ts` và thông số cân bằng trong `toolbox/templates/GAME_BALANCE_SPEC.md`, điền `HANDOFF.md` và đưa ngay câu lệnh để mình giao cho Codex vào code chính.
 ```
 
 ---
 
-## BƯỚC 2: Giao cho Claude Code (`claude.cmd` — Claude Pro)
-> **Mục đích**: Chỉ giao việc khó (Kiến trúc, State/Hooks phức tạp, Logic nhiều ràng buộc) sau khi Antigravity đã chuẩn bị sẵn `HANDOFF.md`.
+## BƯỚC 2: (Tùy chọn) Giao cho Claude Code (`claude.cmd` — Chỉ 10% Architect đầu kỳ)
+> **Lưu ý**: Bỏ qua bước này nếu bạn dùng **Prompt 1B (Zero-Claude Failsafe)** ở trên.
 
-### 📋 Prompt 2A — Giao Claude viết Core Logic / Kiến trúc (Tiết kiệm Token)
+### 📋 Prompt 2A — Chốt Types & Công thức cân bằng trong 1 lượt duy nhất
 ```text
 Đọc `CLAUDE.md` và `HANDOFF.md`.
-Thực hiện đúng phần việc được giao cho Claude trong Checklist của `HANDOFF.md` (chỉ đọc các file đã liệt kê trong mục Context Brief, không tự quét toàn bộ repo và không chạy vòng lặp test/build).
-Sau khi code xong từng file, hãy cập nhật trạng thái vào `HANDOFF.md`.
-```
-
-### 📋 Prompt 2B — Giao Claude tối ưu / Refactor đoạn code khó
-```text
-Đọc `HANDOFF.md` và chỉ mở file `[đường-dẫn-file]`.
-Hãy thiết kế lại / tối ưu logic tại `[tên hàm hoặc component]` sao cho sạch, đúng chuẩn TypeScript strict và dễ mở rộng. Không chạy test/build, chỉ sửa code và ghi chú lại vào `HANDOFF.md`.
+Chỉ cập nhật `src/types/game.ts` và công thức cân bằng tại `toolbox/templates/GAME_BALANCE_SPEC.md` theo yêu cầu trong `HANDOFF.md`.
+Tuyệt đối không quét toàn bộ repo và không chạy test/build. Cập nhật `HANDOFF.md` và kết thúc ngay khi xong 2 file này.
 ```
 
 ---
 
-## BƯỚC 3: Giao cho OpenAI Codex (`codex.cmd` — GPT Pro)
-> **Mục đích**: Tận dụng quota lớn của GPT Pro để viết Backend nặng, thuật toán, viết Unit/Integration Test, chạy vòng lặp `typecheck -> test -> fix` và Review code.
+## BƯỚC 3: Giao cho OpenAI Codex (`codex.cmd` — Code Chính 65% & QA)
+> **Mục đích**: Giao toàn bộ phần code nặng nhất (Game Engine, Grid/Merge/Card logic, State Machine, Unit Tests) cho Codex.
 
-### 📋 Prompt 3A — Giao Codex viết Backend / API / Xử lý dữ liệu
+### 📋 Prompt 3A — Giao Codex viết toàn bộ Core Game Logic & Unit Tests
 ```text
-Đọc `AGENTS.md` và `HANDOFF.md`.
-Hãy triển khai phần Backend Service / API được giao cho Codex trong `HANDOFF.md` (tuân thủ chặt chẽ kiểu dữ liệu trong `src/types/index.ts`).
-Sau khi viết xong, hãy chạy `npm.cmd run typecheck` và `npm.cmd test` để đảm bảo không có lỗi, rồi cập nhật `HANDOFF.md`.
-```
-
-### 📋 Prompt 3B — Giao Codex chạy vòng lặp Test, Sửa lỗi Build & Review Code (Sau khi Claude/Antigravity code xong)
-```text
-Đọc `AGENTS.md` và `HANDOFF.md`.
-1. Chạy `npm.cmd run typecheck` và `npm.cmd test`, tự động sửa toàn bộ lỗi TypeScript hoặc lỗi test nếu có.
-2. Viết bổ sung Unit Test trong thư mục `tests/` cho các logic mới vừa thêm (bao gồm cả edge cases).
-3. Chạy `git diff main...HEAD` để review toàn bộ code mới (kiểm tra lỗi logic, race condition, bảo mật) và hoàn thiện nốt, sau đó cập nhật `HANDOFF.md`.
+Đọc `PLAYBOOK.md`, `AGENTS.md` và `HANDOFF.md`.
+Bạn là Main Coder (Code chính). Hãy:
+1. Triển khai toàn bộ logic game được giao tại `src/game/` theo đúng `src/types/game.ts` và tái sử dụng các module có sẵn trong `toolbox/modules/` (như `storageManager.ts`).
+2. Viết đầy đủ Unit Test trong `tests/` cho toàn bộ luật chơi và edge cases.
+3. Chạy `toolbox\scripts\verify-all.cmd` và sửa cho đến khi pass 100%, sau đó cập nhật `HANDOFF.md`.
 ```
 
 ---
 
-## BƯỚC 4: Giao cho Antigravity (Gemini Pro) — Làm UI, Ghép nối & Chốt hạ
-> **Mục đích**: Dựng giao diện, nối Frontend với Backend của Claude/Codex, chạy thử trên trình duyệt và push lên GitHub.
+## BƯỚC 4: Giao cho Antigravity — Ghép UI Canvas, Hiệu ứng Toolbox & Nghiệm thu Playbook
 
-### 📋 Prompt 4A — Dựng Giao diện (UI) & Ghép nối Full-Stack
+### 📋 Prompt 4A — Hoàn thiện UI/Canvas & Chạy Checklist Nghiệm thu
 ```text
-Đọc `HANDOFF.md`. Hãy xây dựng giao diện UI trong `src/components/ui/` và `src/app/`, kết nối với Hooks/Backend mà Claude và Codex đã viết.
-Sau đó kiểm tra lại `npm.cmd run typecheck`, `npm.cmd test` và cập nhật `HANDOFF.md`.
+Đọc `PLAYBOOK.md` và `HANDOFF.md`.
+1. Hãy kết nối logic mới của Codex trong `src/game/` vào giao diện Canvas/HUD (`src/components/ui/`), gắn âm thanh từ `toolbox/modules/soundSynth.ts` và hiệu ứng từ `toolbox/modules/tweenParticles.ts`.
+2. Chạy `toolbox\scripts\verify-all.cmd` và tự kiểm tra sản phẩm với toàn bộ 10 mục trong Checklist Nghiệm thu của `PLAYBOOK.md` trước khi báo cáo cho mình.
 ```
 
 ---
 
-## 🚑 CỨU HỘ KHẨN CẤP: Khi Claude hoặc Codex hết Token giữa chừng
+## 🚑 CỨU HỘ KHẨN CẤP (FAILSAFE): Khi bất kỳ Agent nào hết Token hoặc đứt quãng giữa chừng
 
-Khi một Agent đang chạy mà báo hết limit / dừng giữa chừng, mở ngay Agent dự phòng (**Codex** nếu đang làm Backend/Logic/Test; **Antigravity** nếu đang làm UI/Full-stack) trong **cùng Worktree** và paste:
+Mở ngay **Codex (`codex.cmd`)** hoặc **Antigravity** trong cùng Worktree và paste:
 
 ```text
-Tiếp quản công việc đang dở: Hãy đọc `HANDOFF.md`, chạy `git status --short` và `git diff` để nắm chính xác những dòng code Agent trước đang viết dở, sau đó hoàn thiện nốt các mục còn lại trong Checklist.
+Chế độ Failsafe Takeover: Hãy chạy `toolbox\scripts\handoff-status.cmd` để đọc trạng thái Git diff và `HANDOFF.md` hiện tại, sau đó tiếp tục hoàn thiện nốt các mục đang dở và kiểm tra bằng `toolbox\scripts\verify-all.cmd`.
 ```

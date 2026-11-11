@@ -3,7 +3,7 @@ import type { AgentTask, AgentName } from "@/types";
 const INITIAL_TASKS: AgentTask[] = [
   {
     id: "task-1",
-    title: "Quét codebase & chuẩn bị Context Brief vào HANDOFF.md",
+    title: "Phỏng vấn, lập PLAYBOOK.md & xây dựng Toolbox tái sử dụng (toolbox/)",
     assignedTo: "antigravity",
     backupAgent: "codex",
     status: "done",
@@ -11,27 +11,27 @@ const INITIAL_TASKS: AgentTask[] = [
   },
   {
     id: "task-2",
-    title: "Thiết kế Core Architecture & Data Contracts (src/types)",
+    title: "Chốt Types (src/types/game.ts) & Công thức Cân bằng (GAME_BALANCE_SPEC.md)",
     assignedTo: "claude",
-    backupAgent: "codex",
+    backupAgent: "antigravity",
     status: "done",
     layer: "Architecture",
   },
   {
     id: "task-3",
-    title: "Xây dựng giao diện Web App & tích hợp API",
-    assignedTo: "antigravity",
-    backupAgent: "claude",
-    status: "in_progress",
-    layer: "UI/Full-stack",
+    title: "Code chính Core Game Engine 4x4 Grid/Merge + Card Turn Logic & Unit Tests",
+    assignedTo: "codex",
+    backupAgent: "antigravity",
+    status: "done",
+    layer: "Backend/QA",
   },
   {
     id: "task-4",
-    title: "Chạy vòng lặp Typecheck, Unit Test & Code Review",
-    assignedTo: "codex",
-    backupAgent: "antigravity",
-    status: "todo",
-    layer: "Backend/QA",
+    title: "Dựng HTML5 Canvas 60FPS, ghép Web Audio/Particles & Nghiệm thu verify-all.cmd",
+    assignedTo: "antigravity",
+    backupAgent: "codex",
+    status: "done",
+    layer: "UI/Full-stack",
   },
 ];
 
