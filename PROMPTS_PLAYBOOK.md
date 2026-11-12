@@ -1,4 +1,4 @@
-# 🎯 PROMPTS_PLAYBOOK.md — Bộ Câu Lệnh Copy-Paste Phân Việc v3.1
+# 🎯 PROMPTS_PLAYBOOK.md — Bộ Câu Lệnh Copy-Paste Phân Việc v3.2
 *(Antigravity Điều Phối 25% • Codex Code Chính 65% • Claude Phụ ≤10% (+5% khi thiết kế UI/UX) + Failsafe đủ 7 trường hợp hết quota)*
 
 Mỗi lần làm tính năng mới cho Game HTML trên **Orca**:
@@ -16,7 +16,7 @@ Mỗi lần làm tính năng mới cho Game HTML trên **Orca**:
 |---|---|---|---|---|---|
 | **0 — Chuẩn** | Cả 3 | 25% | 65% | 10% | Antigravity |
 | **A — Thiếu Claude** | AG + Codex | 30% | 70% | 0 | Antigravity |
-| **B — Thiếu Antigravity** | Codex + Claude | 0 | 85% | 15% | Bạn + Codex |
+| **B — Thiếu Antigravity** | Codex + Claude | 0 | 80% | 20% | **Claude** |
 | **C — Codex Solo** | Chỉ Codex | 0 | 100% | 0 | Bạn |
 | **D — Thiếu Codex** | AG + Claude | 75% | 0 | 25% | Antigravity |
 | **E — Antigravity Solo** | Chỉ AG | 100% | 0 | 0 | Antigravity |
@@ -25,7 +25,7 @@ Mỗi lần làm tính năng mới cho Game HTML trên **Orca**:
 **Phân vai chi tiết theo chế độ:**
 - **0**: AG = brief + `HANDOFF.md` + UI/Canvas + nghiệm thu • Codex = `src/game/` + `tests/` + verify • Claude = `src/types/game.ts` + `GAME_BALANCE_SPEC.md` (1 lượt).
 - **A**: AG nhận thêm types + balance (từ template) • Codex soát types qua test, sửa type trước khi viết engine. Ghi `HANDOFF.md`: "types chưa qua Claude review".
-- **B**: Codex nhận thêm điều phối + UI/Canvas (tái dùng `toolbox/modules/`) • Claude = 1 lượt brief + types/balance đầu kỳ, 1 lượt nghiệm thu cuối theo checklist `PLAYBOOK.md`. Không code UI.
+- **B**: **Claude là Điều phối viên** thay Antigravity: brief + `HANDOFF.md` + types/balance đầu kỳ, soạn sẵn prompt cho từng bước của Codex, kiểm tra ngắn giữa các bước, nghiệm thu cuối theo checklist `PLAYBOOK.md`. Không code. • Codex nhận thêm UI/Canvas (tái dùng `toolbox/modules/`).
 - **C**: Codex làm tất cả, chia **pha tuần tự**, mỗi pha 1 phiên + 1 commit + verify xanh. Mục cần mắt người → ghi "chờ review".
 - **D**: AG code luôn `src/game/` + `tests/` • Claude = types/balance + đúng 1–2 hàm thuật toán khó (merge/combo/RNG) + 1 lượt review diff.
 - **E**: AG làm tất cả theo pha như chế độ C.
@@ -38,7 +38,7 @@ Mỗi lần làm tính năng mới cho Game HTML trên **Orca**:
 | Chế độ | Antigravity | Codex | Claude |
 |---|---|---|---|
 | 0 + Design | 20% | 65% | 15% |
-| B + Design | 0 | 80% | 20% |
+| B + Design | 0 | 75% | 25% |
 | D + Design | 70% | 0 | 30% |
 | F | — | — | 100% (bỏ qua Design, chỉ làm việc nhỏ) |
 | A / C / E (không có Claude) | Không dùng Design; agent làm UI tự theo `UI_DESIGN_SPEC.md` cũ nếu có, hoặc theo phong cách hiện tại của game | | |
@@ -142,21 +142,35 @@ Chế độ A. Đọc `PLAYBOOK.md`, `AGENTS.md` và `HANDOFF.md`.
 
 ---
 
-## MỤC 3: Chế độ B — Thiếu Antigravity (Codex 85% / Claude 15%)
+## MỤC 3: Chế độ B — Thiếu Antigravity → Claude Điều phối (Codex 80% / Claude 20%)
 
-> **Bạn** là điều phối viên: chạy `toolbox\scripts\handoff-status.cmd` giữa các bước để xem trạng thái.
+> **Claude là Điều phối viên.** Bạn chỉ chuyển prompt Claude soạn sẵn sang Codex, rồi quay lại gọi Claude kiểm tra.
+> **Giữ token Claude:** mỗi lượt Claude chỉ đọc `HANDOFF.md` + `git diff --stat` (+ output `verify-all` nếu cần), không đọc toàn bộ code, không tự sửa code, không chạy vòng test/build.
 
-### 📋 Prompt B-1 → Claude: Brief + Types & Balance (1 lượt)
+### 📋 Prompt B-1 → Claude: Khởi động điều phối (1 lượt)
 ```text
-Chế độ B (Thiếu Antigravity — Codex 85% / Claude 15%). Ngoại lệ được phép: viết brief vào `HANDOFF.md`.
-Đọc `CLAUDE.md` và `HANDOFF.md`. Tính năng: [Mô tả ngắn gọn tính năng].
-1. Viết Context Brief ngắn (≤15 dòng) vào `HANDOFF.md`: mục tiêu, luật chơi, phạm vi file, điều kiện hoàn thành. Ghi "Chế độ: B".
-2. Chốt `src/types/game.ts` và `toolbox/templates/GAME_BALANCE_SPEC.md`.
-Không quét repo, không chạy test/build. Kết thúc ngay khi xong.
+Chế độ B (Thiếu Antigravity — Claude điều phối 20% / Codex 80%).
+Đọc `CLAUDE.md`, `PROMPTS_PLAYBOOK.md` Mục 0 và `HANDOFF.md`. Tính năng: [Mô tả ngắn gọn tính năng].
+1. Chạy `toolbox\scripts\handoff-status.cmd`.
+2. Viết Context Brief (≤15 dòng) vào `HANDOFF.md`: mục tiêu, luật chơi, phạm vi file, điều kiện hoàn thành. Ghi "Chế độ: B — Điều phối: Claude".
+3. Chia việc thành các bước cho Codex (Engine+Tests → UI → ...), ghi danh sách bước vào `HANDOFF.md`.
+4. Chốt `src/types/game.ts` và `toolbox/templates/GAME_BALANCE_SPEC.md` (nếu có màn hình mới, viết luôn `UI_DESIGN_SPEC.md` theo Mục 1B).
+5. In ra prompt hoàn chỉnh cho bước 1 của Codex để mình copy.
+Không quét repo, không chạy test/build.
 ```
 
 ### 📋 Prompt B-2 → Codex: Core Logic + Tests
-Dùng **Prompt 0-3**.
+Dùng prompt Claude vừa soạn (hoặc **Prompt 0-3**).
+
+### 📋 Prompt B-2b → Claude: Kiểm tra giữa các bước & giao bước tiếp (lặp lại sau mỗi bước của Codex)
+```text
+Chế độ B — Điều phối. Chạy `toolbox\scripts\handoff-status.cmd`.
+Chỉ đọc `HANDOFF.md` và `git diff --stat` (đọc file cụ thể chỉ khi thật cần).
+1. Bước vừa xong có đạt điều kiện hoàn thành không? `verify-all` đã xanh chưa (theo `HANDOFF.md`)?
+2. Nếu chưa đạt: soạn prompt sửa lỗi ngắn cho Codex.
+3. Nếu đạt: đánh dấu xong trong `HANDOFF.md` và soạn prompt hoàn chỉnh cho bước tiếp theo của Codex.
+In prompt ra để mình copy. Không sửa code.
+```
 
 ### 📋 Prompt B-3 → Codex: UI/Canvas (phiên mới, sau khi B-2 xanh)
 ```text
@@ -278,7 +292,7 @@ Sắp hết quota. Dừng ngay việc đang làm, ghi vào `HANDOFF.md`: đã xo
 | Agent hết quota giữa chừng | Còn lại | Ai tiếp quản | Chuyển sang chế độ |
 |---|---|---|---|
 | Claude | AG + Codex | Antigravity (types/balance) | A |
-| Antigravity | Codex + Claude | Codex (UI + điều phối) | B |
+| Antigravity | Codex + Claude | Claude (điều phối), Codex (UI) | B |
 | Codex | AG + Claude | Antigravity (code), Claude (hàm khó) | D |
 | Claude + AG | Codex | Codex | C |
 | Codex + Claude | AG | Antigravity | E |
