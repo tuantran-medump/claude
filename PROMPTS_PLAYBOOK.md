@@ -1,5 +1,5 @@
-# 🎯 PROMPTS_PLAYBOOK.md — Bộ Câu Lệnh Copy-Paste Phân Việc v3.0
-*(Antigravity Điều Phối 25% • Codex Code Chính 65% • Claude Phụ ≤10% + Failsafe đủ 7 trường hợp hết quota)*
+# 🎯 PROMPTS_PLAYBOOK.md — Bộ Câu Lệnh Copy-Paste Phân Việc v3.1
+*(Antigravity Điều Phối 25% • Codex Code Chính 65% • Claude Phụ ≤10% (+5% khi thiết kế UI/UX) + Failsafe đủ 7 trường hợp hết quota)*
 
 Mỗi lần làm tính năng mới cho Game HTML trên **Orca**:
 1. Xem **Mục 0** để biết agent nào còn quota → chọn đúng **Chế độ** (0, A–F).
@@ -32,6 +32,48 @@ Mỗi lần làm tính năng mới cho Game HTML trên **Orca**:
 - **F**: Claude chỉ làm **phạm vi tối thiểu** (1 tính năng nhỏ hoặc sửa lỗi), ưu tiên chờ Codex/AG có quota lại nếu không gấp.
 
 > Tỷ lệ chỉ là định hướng khối lượng. Khi agent hết quota có lại → **chỉ giao phần review các mục "chờ review"**, không làm lại từ đầu, rồi quay về Chế độ 0.
+
+**Tỷ lệ khi bật Bước Thiết kế UI/UX bằng Claude (Mục 1B):**
+
+| Chế độ | Antigravity | Codex | Claude |
+|---|---|---|---|
+| 0 + Design | 20% | 65% | 15% |
+| B + Design | 0 | 80% | 20% |
+| D + Design | 70% | 0 | 30% |
+| F | — | — | 100% (bỏ qua Design, chỉ làm việc nhỏ) |
+| A / C / E (không có Claude) | Không dùng Design; agent làm UI tự theo `UI_DESIGN_SPEC.md` cũ nếu có, hoặc theo phong cách hiện tại của game | | |
+
+---
+
+## MỤC 1B: 🎨 Thiết kế UI/UX bằng Claude (tùy chọn — trước khi code UI)
+
+> **Khi nào dùng:** tính năng có màn hình/HUD/menu mới hoặc cần làm đẹp lại. Bỏ qua nếu chỉ sửa logic.
+> **Chạy lúc nào:** ngay sau Prompt 2 của Claude (types/balance) — có thể gộp chung 1 lượt — và **trước** khi agent làm UI bắt đầu.
+> **Tiết kiệm token:** Claude chỉ viết spec dạng chữ, **không viết code, không HTML mock, không gọi skill design** (khung spec đã nằm sẵn trong prompt). Agent làm UI (Antigravity ở chế độ 0/A/D/E, Codex ở chế độ B/C) code theo spec.
+
+### 📋 Prompt 1B-1 → Claude: Viết `UI_DESIGN_SPEC.md`
+```text
+Bước Design UI/UX (ngoại lệ được phép: tạo/sửa `UI_DESIGN_SPEC.md`).
+Đọc `CLAUDE.md`, `HANDOFF.md` và `src/types/game.ts`. Không quét repo, không viết code, không chạy test/build.
+Viết `UI_DESIGN_SPEC.md` (tối đa ~2 trang) theo đúng khung:
+1. Mood & phong cách: 3–5 từ khoá + 1 câu mô tả cảm giác.
+2. Design tokens: bảng màu (hex, kèm vai trò: nền/chính/nhấn/cảnh báo/chữ), font + cỡ chữ theo cấp, bo góc, khoảng cách (thang 4/8px), bóng.
+3. Layout: sơ đồ ASCII cho từng màn hình (desktop + mobile ≥360px), vị trí HUD, vùng chạm tối thiểu 44px.
+4. Thành phần: danh sách component, mỗi cái có trạng thái (default/hover/pressed/disabled/selected) và mapping tới field trong `src/types/game.ts`.
+5. Chuyển động & phản hồi: sự kiện game → hiệu ứng (`toolbox/modules/tweenParticles.ts`) → âm thanh (`toolbox/modules/soundSynth.ts`), thời lượng + easing.
+6. Trạng thái màn hình: loading, chơi, pause, thắng, thua, empty/high score.
+7. Accessibility: độ tương phản ≥4.5:1, hỗ trợ bàn phím, không chỉ dùng màu để truyền thông tin.
+8. Ngoài phạm vi: những gì KHÔNG làm lần này.
+Xong ghi 1 dòng vào `HANDOFF.md`: "UI spec: `UI_DESIGN_SPEC.md` — agent làm UI phải code theo spec" rồi kết thúc.
+```
+
+### 📋 Prompt 1B-2 → Claude: Review UI sau khi code (tùy chọn, 1 lượt ngắn)
+```text
+Review UI theo `UI_DESIGN_SPEC.md`. Chỉ đọc `git diff --stat` và các file UI trong diff (`src/components/ui/`, `src/app/`).
+Liệt kê tối đa 10 điểm lệch spec (file:dòng + cách sửa 1 câu) vào `HANDOFF.md`. Không tự sửa code, không chạy test/build.
+```
+
+> Dòng bổ sung khi giao UI cho Antigravity (0-4, D-3, E-1) hoặc Codex (B-3, C-2): **"Nếu có `UI_DESIGN_SPEC.md` thì code đúng theo spec (tokens, layout, trạng thái, chuyển động); chỗ nào spec không khả thi thì ghi lý do vào `HANDOFF.md`, không tự đổi phong cách."**
 
 ---
 
@@ -66,6 +108,7 @@ Bạn là Main Coder. Hãy:
 ### 📋 Prompt 0-4 → Antigravity: UI/Canvas & Nghiệm thu
 ```text
 Đọc `PLAYBOOK.md` và `HANDOFF.md`.
+0. Nếu có `UI_DESIGN_SPEC.md` thì code đúng theo spec; chỗ không khả thi ghi lý do vào `HANDOFF.md`.
 1. Kết nối logic của Codex trong `src/game/` vào Canvas/HUD (`src/components/ui/`), gắn âm thanh từ `toolbox/modules/soundSynth.ts` và hiệu ứng từ `toolbox/modules/tweenParticles.ts`.
 2. Chạy `toolbox\scripts\verify-all.cmd` và tự kiểm tra với toàn bộ Checklist Nghiệm thu của `PLAYBOOK.md` trước khi báo cáo.
 ```
@@ -119,6 +162,7 @@ Dùng **Prompt 0-3**.
 ```text
 Chế độ B. Đọc `PLAYBOOK.md` và `HANDOFF.md`.
 Bạn kiêm phần UI vì Antigravity hết quota:
+0. Nếu có `UI_DESIGN_SPEC.md` thì code đúng theo spec (tokens, layout, trạng thái, chuyển động); chỗ không khả thi ghi lý do vào `HANDOFF.md`, không tự đổi phong cách.
 1. Kết nối `src/game/` vào Canvas/HUD (`src/components/ui/`, `src/app/`). Bắt buộc dùng `toolbox/modules/soundSynth.ts`, `tweenParticles.ts`, `storageManager.ts` — không viết lại.
 2. Chạy `toolbox\scripts\verify-all.cmd` đến khi pass, cập nhật `HANDOFF.md`.
 ```
