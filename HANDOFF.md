@@ -7,9 +7,9 @@
 
 ## 1. Nhiệm vụ hiện tại
 - **Chế độ:** `B` (xem Mục 0 của `PROMPTS_PLAYBOOK.md`)
-- **Tính năng / Task:** `Bỏ code game, giữ Next.js và dashboard task`
+- **Tính năng / Task:** `Escape echo trong verifier; đồng bộ portable web v3.0`
 - **Spec:** `docs/specs/<ngày>-<tính-năng>.md` (chép từ `toolbox/templates/WEB_SPEC.md`)
-- **Nhánh / Worktree:** `codex/remove-game` (từ `docs/web-kit`)
+- **Nhánh / Worktree:** `codex/fix-verify-echo` (từ `main` tại 0bab2e0)
 - **Điều phối:** `Claude — chế độ B`
 - **Code chính:** `Codex (GPT Pro — 65%)`
 - **Architect:** `Claude (Claude Pro — ≤10%)`
@@ -32,9 +32,11 @@
 ---
 
 ## 4. Trạng thái đang làm dở
-- **File vừa hoàn thành:** xóa `src/game/engine.ts` (toàn bộ `src/game/`), `src/types/game.ts`, `src/components/ui/TacticalGridGame.tsx`, `tests/gameEngine.test.ts`, `toolbox/modules/soundSynth.ts`, `toolbox/modules/storageManager.ts`, `toolbox/modules/tweenParticles.ts` (toàn bộ `toolbox/modules/`); sửa trang chủ, danh mục Toolbox và nhãn dashboard/task.
+- **File vừa hoàn thành:** `toolbox/scripts/verify-all.cmd`: đổi echo thành `echo       ^-^> All orchestration files present.`; verifier in `[SUCCESS] All Playbook Verification Checks Passed (0 Errors)!`, 3/3 test PASS, typecheck/build PASS; kiểm tra không có file `All` trước và sau chạy. `git diff --check` sạch.
 - **File đang sửa dở:** không có.
 - **Bước tiếp theo:** chờ Claude review.
+- **Portable:** đã đồng bộ 8 tài liệu gốc và scripts/templates/docs; HANDOFF bản trắng chế độ 0. Xóa đúng 3 module cũ và GAME_BALANCE_SPEC.md theo mục 4; không có src/tests mẫu để dọn. Zip cũ đổi thành multi-agent-starter-kit.game-v2.zip (hash giữ nguyên), zip mới có 13 file và khớp nội dung thư mục; grep game|GAME_BALANCE rỗng. Không có file ngoài repo nào khác cần giữ lại.
+- **Việc lệch plan:** không. Giữ nguyên debug.log có sẵn, không đọc/sửa/commit.
 
 ## 5. Cần quyết / chờ review
 Không có.
