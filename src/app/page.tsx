@@ -1,6 +1,5 @@
 import { getDefaultTasks } from "@/server/taskService";
 import { AgentDashboard } from "@/components/ui/AgentDashboard";
-import { TacticalGridGame } from "@/components/ui/TacticalGridGame";
 
 export default function HomePage() {
   const initialTasks = getDefaultTasks();
@@ -12,15 +11,12 @@ export default function HomePage() {
           Multi-Agent Starter Kit v2.0 • Codex Code Chính (65%) • Antigravity Điều Phối (25%) • Claude Phụ (≤10%)
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
-          Orca HTML5 Game Studio & Multi-Agent Playbook
+          Orca Web Workspace & Multi-Agent Playbook
         </h1>
         <p className="text-sm text-slate-400">
-          Bộ khung Game HTML 2D (Grid/Merge + Card Deckbuilder Roguelike) vận hành kèm Toolbox tái sử dụng & Failsafe 3 lớp.
+          Bộ khung ứng dụng web và bảng điều phối công việc, kèm Toolbox tái sử dụng & Failsafe 3 lớp.
         </p>
       </header>
-
-      {/* Sản phẩm Game HTML5 Canvas hoàn chỉnh */}
-      <TacticalGridGame />
 
       {/* Bảng điều phối trạng thái Multi-Agent Kit v2.0 */}
       <AgentDashboard initialTasks={initialTasks} />

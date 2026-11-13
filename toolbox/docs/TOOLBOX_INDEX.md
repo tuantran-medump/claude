@@ -19,9 +19,3 @@ Mọi agent (**Antigravity**, **Codex**, **Claude**) phải tra danh mục này 
 | Template | Người dùng chính | Mục đích |
 | :--- | :--- | :--- |
 | [`WEB_SPEC.md`](../templates/WEB_SPEC.md) | Claude (≤10%) hoặc Antigravity/Codex khi Zero-Claude | Mẫu spec tính năng web: mục tiêu, dữ liệu, API, luật nghiệp vụ, màn hình & trạng thái, bảo mật, test. Chép thành `docs/specs/<ngày>-<tính-năng>.md`. |
-
----
-
-## 3. Di sản game (không dùng cho web, chờ dọn)
-
-`toolbox/modules/soundSynth.ts`, `storageManager.ts`, `tweenParticles.ts` được viết cho bản game cũ (Web Audio, lưu ván chơi, hiệu ứng Canvas). Không import vào tính năng web mới. Việc xóa hoặc chuyển đổi sẽ làm trong một task dọn dẹp riêng của Codex.

@@ -6,11 +6,11 @@
 ---
 
 ## 1. Nhiệm vụ hiện tại
-- **Chế độ:** `0` (xem Mục 0 của `PROMPTS_PLAYBOOK.md`)
-- **Tính năng / Task:** `Chưa có — chờ người dùng giao tính năng web mới`
+- **Chế độ:** `B` (xem Mục 0 của `PROMPTS_PLAYBOOK.md`)
+- **Tính năng / Task:** `Bỏ code game, giữ Next.js và dashboard task`
 - **Spec:** `docs/specs/<ngày>-<tính-năng>.md` (chép từ `toolbox/templates/WEB_SPEC.md`)
-- **Nhánh / Worktree:** `main`
-- **Điều phối:** `Antigravity (Gemini Pro — 25%)`
+- **Nhánh / Worktree:** `codex/remove-game` (từ `docs/web-kit`)
+- **Điều phối:** `Claude — chế độ B`
 - **Code chính:** `Codex (GPT Pro — 65%)`
 - **Architect:** `Claude (Claude Pro — ≤10%)`
 
@@ -21,7 +21,6 @@
 - **Toolbox:** [`toolbox/docs/TOOLBOX_INDEX.md`](./toolbox/docs/TOOLBOX_INDEX.md) — scripts `verify-all.cmd`, `handoff-status.cmd`, `new-worktree.cmd`; template [`WEB_SPEC.md`](./toolbox/templates/WEB_SPEC.md).
 - **Stack:** Next.js 15 (App Router) + React 19 + TypeScript strict + Tailwind 4 + Vitest.
 - **Code web hiện có:** `src/types/index.ts`, `src/server/taskService.ts`, `src/app/api/tasks/route.ts`, `src/hooks/useAgentTasks.ts`, `src/components/ui/AgentDashboard.tsx`, `tests/taskService.test.ts`.
-- **Di sản game (chờ dọn, chưa xóa):** `src/game/`, `src/types/game.ts`, `src/components/ui/TacticalGridGame.tsx` (đang được `src/app/page.tsx` import), `tests/gameEngine.test.ts`, `toolbox/modules/` (soundSynth, storageManager, tweenParticles). Việc dọn là một task riêng cho Codex, phải giữ `verify-all` xanh.
 
 ---
 
@@ -35,9 +34,28 @@
 ---
 
 ## 4. Trạng thái đang làm dở
-- **File vừa hoàn thành:** bộ tài liệu đã chuyển từ game sang web (v3.0).
+- **File vừa hoàn thành:** xóa code game và sửa trang web.
 - **File đang sửa dở:** không có.
-- **Bước tiếp theo:** người dùng giao tính năng web đầu tiên → dùng Prompt 0-1 (hoặc B-1 nếu vắng Antigravity) trong `PROMPTS_PLAYBOOK.md`.
+- **Bước tiếp theo:** chờ Claude review.
 
 ## 5. Cần quyết / chờ review
-- Không có.
+- Chờ Claude review nhánh codex/remove-game.
+- Removed: src/game
+- Removed: src/types/game.ts
+- Removed: src/components/ui/TacticalGridGame.tsx
+- Removed: tests/gameEngine.test.ts
+- Removed: toolbox/modules
+
+- Tiến độ: src/app/page.tsx đã bỏ component game và đổi nội dung sang web.
+- Tiến độ: TOOLBOX_INDEX.md đã bỏ mục 3.
+
+## 6. Kết quả dọn code cũ — chờ Claude review
+
+- Nhánh `codex/remove-game` tạo trực tiếp từ `docs/web-kit`; không từ main.
+- Đã xóa: `src/game/engine.ts` (toàn bộ `src/game/`), `src/types/game.ts`, `src/components/ui/TacticalGridGame.tsx`, `tests/gameEngine.test.ts`, `toolbox/modules/soundSynth.ts`, `toolbox/modules/storageManager.ts`, `toolbox/modules/tweenParticles.ts` (toàn bộ `toolbox/modules/`).
+- Đã sửa: `src/app/page.tsx` bỏ import/render game, đổi tiêu đề/mô tả sang web; `toolbox/docs/TOOLBOX_INDEX.md` bỏ mục 3. `src/app/layout.tsx` không có chữ game và `src/types/index.ts` không re-export game nên giữ nguyên.
+- Trước khi xóa đã chạy `rg -n 'game|Game|soundSynth|storageManager|tweenParticles|TacticalGrid' src/ tests/ toolbox/`. Rà lại sau xóa: không còn import game/module bị xóa; chỉ còn nhãn tĩnh trong `src/server/taskService.ts` và `src/components/ui/AgentDashboard.tsx`. Không sửa hai file này vì ngoài phạm vi; taskService không import code game.
+- Kiểm tra: `toolbox\scripts\verify-all.cmd` PASS typecheck, 3/3 test taskService, Next.js production build; in `[SUCCESS] All Playbook Verification Checks Passed (0 Errors)!`. `git diff --check` sạch.
+- Đối chiếu Checklist PLAYBOOK: file điều phối giữ nguyên; HANDOFF phản ánh đúng nhánh/chế độ/task; task dashboard/API/hook và test nghiệp vụ giữ nguyên, typecheck/test/build xanh. Đây là cleanup, không tạo spec tính năng mới hay mở rộng nghiệm thu giao diện/accessibility của dashboard.
+- Việc lệch plan: dùng `git switch -c codex/remove-game docs/web-kit` thay `new-worktree.cmd` vì script hard-code main, trái nhánh gốc người dùng chỉ định. Verifier tạo file phụ `All` do dấu `>` trong echo; đã xóa artifact này, không sửa script. `debug.log` đã có sẵn, không đọc/sửa/commit.
+- Không sửa các tài liệu/quy trình, scripts/templates và server/API/hooks được bảo vệ. Không push/merge/deploy. Bước tiếp theo: chờ Claude review.
