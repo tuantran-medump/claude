@@ -11,7 +11,7 @@ const INITIAL_TASKS: AgentTask[] = [
   },
   {
     id: "task-2",
-    title: "Chốt Types (src/types/game.ts) & Công thức Cân bằng (GAME_BALANCE_SPEC.md)",
+    title: "Chốt Types (src/types/) & Spec tính năng (WEB_SPEC.md)",
     assignedTo: "claude",
     backupAgent: "antigravity",
     status: "done",
@@ -19,7 +19,7 @@ const INITIAL_TASKS: AgentTask[] = [
   },
   {
     id: "task-3",
-    title: "Code chính Core Game Engine 4x4 Grid/Merge + Card Turn Logic & Unit Tests",
+    title: "Code chính Server/API/Hooks & Unit Tests",
     assignedTo: "codex",
     backupAgent: "antigravity",
     status: "done",
