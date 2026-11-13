@@ -26,7 +26,7 @@ if not exist "HANDOFF.md" (
   echo [ERROR] Missing HANDOFF.md!
   exit /b 1
 )
-echo       -> All orchestration files present.
+echo       ^-^> All orchestration files present.
 
 echo [2/4] Running TypeScript strict typecheck (npm.cmd run typecheck)...
 call npm.cmd run typecheck
