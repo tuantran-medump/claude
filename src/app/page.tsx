@@ -8,7 +8,7 @@ export default function HomePage() {
     <main className="mx-auto max-w-5xl px-4 sm:px-6 py-8 sm:py-10 space-y-10">
       <header className="space-y-2 border-b border-slate-800 pb-6">
         <div className="inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300">
-          Multi-Agent Starter Kit v2.0 • Codex Code Chính (65%) • Antigravity Điều Phối (25%) • Claude Phụ (≤10%)
+          Multi-Agent Starter Kit v3.0 • Codex Code Chính (65%) • Antigravity Điều Phối (25%) • Claude Phụ (≤10%)
         </div>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
           Orca Web Workspace & Multi-Agent Playbook
@@ -18,7 +18,7 @@ export default function HomePage() {
         </p>
       </header>
 
-      {/* Bảng điều phối trạng thái Multi-Agent Kit v2.0 */}
+      {/* Bảng điều phối trạng thái Multi-Agent Kit v3.0 */}
       <AgentDashboard initialTasks={initialTasks} />
     </main>
   );

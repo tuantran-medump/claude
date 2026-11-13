@@ -6,7 +6,7 @@ import { useAgentTasks } from "@/hooks/useAgentTasks";
 const AGENT_BADGE: Record<AgentName, { label: string; quota: string; color: string }> = {
   codex: {
     label: "Codex (GPT Pro)",
-    quota: "65% tải • Main Coder (Game Engine, Grid/Merge Logic & Unit Tests)",
+    quota: "65% tải • Main Coder (Server, API, Hooks & Unit Tests)",
     color: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   },
   antigravity: {
