@@ -1,47 +1,43 @@
-# HANDOFF.md — Bảng Trạng thái & Chuyển giao Công việc (State-on-Disk v2.0)
+# HANDOFF.md — Bảng trạng thái & chuyển giao công việc (State-on-Disk v3.0)
 
-> **Hướng dẫn Failsafe nhanh khi 1 Agent hết token trên Orca:**
-> Mở Agent dự phòng (**Codex** hoặc **Antigravity**) ngay trong cùng Worktree và chạy:
-> `"Chế độ Failsafe Takeover: Hãy chạy toolbox\scripts\handoff-status.cmd để đọc trạng thái Git diff và HANDOFF.md hiện tại, sau đó hoàn thiện nốt và kiểm tra bằng toolbox\scripts\verify-all.cmd."`
-
----
-
-## 1. Nhiệm vụ Hiện tại (Active Task)
-- **Tên tính năng / Task**: `Hoàn thiện Multi-Agent Starter Kit v2.0 (Codex Code Chính 65% • Antigravity Điều Phối 25% • Claude Phụ ≤10% + Failsafe), Toolbox tái sử dụng & Game HTML 2D Grid/Merge + Card Roguelike`
-- **Nhánh / Worktree**: `main`
-- **Agent điều phối chính**: `Antigravity (Gemini Pro — 25%)`
-- **Agent code chính**: `Codex (GPT Pro — 65%)`
-- **Agent phụ (Architect đầu kỳ)**: `Claude (Claude Pro — ≤10% + Zero-Claude Failsafe)`
+> **Failsafe nhanh khi một agent hết token trên Orca:** mở agent dự phòng (Codex hoặc Antigravity) trong cùng worktree và gửi:
+> `"Chế độ Failsafe Takeover: chạy toolbox\scripts\handoff-status.cmd để đọc git diff và HANDOFF.md, hoàn thiện phần đang dở rồi kiểm tra bằng toolbox\scripts\verify-all.cmd."`
 
 ---
 
-## 2. Tóm tắt Ngữ cảnh (Context Brief)
-- **Playbook & Bộ Kit Điều phối v2.0**:
-  - [`PLAYBOOK.md`](./PLAYBOOK.md): Mục tiêu, quy trình 5 bước, quy định bắt buộc dùng Toolbox, Failsafe 3 lớp và Checklist Nghiệm thu 10 tiêu chuẩn.
-  - [`AGENTS.md`](./AGENTS.md), [`CLAUDE.md`](./CLAUDE.md), [`GEMINI.md`](./GEMINI.md), [`PROMPTS_PLAYBOOK.md`](./PROMPTS_PLAYBOOK.md), [`FEATURE_SPEC_TEMPLATE.md`](./FEATURE_SPEC_TEMPLATE.md), [`MULTI_AGENT_CHECKLIST.md`](./MULTI_AGENT_CHECKLIST.md).
-- **Toolbox Tái sử dụng (`toolbox/`)**:
-  - Danh mục: [`toolbox/docs/TOOLBOX_INDEX.md`](./toolbox/docs/TOOLBOX_INDEX.md)
-  - Scripts: [`toolbox/scripts/verify-all.cmd`](./toolbox/scripts/verify-all.cmd), [`toolbox/scripts/handoff-status.cmd`](./toolbox/scripts/handoff-status.cmd), [`toolbox/scripts/new-worktree.cmd`](./toolbox/scripts/new-worktree.cmd)
-  - Modules: [`toolbox/modules/soundSynth.ts`](./toolbox/modules/soundSynth.ts), [`toolbox/modules/storageManager.ts`](./toolbox/modules/storageManager.ts), [`toolbox/modules/tweenParticles.ts`](./toolbox/modules/tweenParticles.ts)
-  - Templates: [`toolbox/templates/GAME_BALANCE_SPEC.md`](./toolbox/templates/GAME_BALANCE_SPEC.md)
-- **Code Game HTML 2D (Grid/Merge + Card Deckbuilder Roguelike)**:
-  - Types: [`src/types/game.ts`](./src/types/game.ts)
-  - Core Engine: [`src/game/engine.ts`](./src/game/engine.ts)
-  - Canvas UI: [`src/components/ui/TacticalGridGame.tsx`](./src/components/ui/TacticalGridGame.tsx)
-  - Unit Tests: [`tests/gameEngine.test.ts`](./tests/gameEngine.test.ts) & [`tests/taskService.test.ts`](./tests/taskService.test.ts)
+## 1. Nhiệm vụ hiện tại
+- **Chế độ:** `0` (xem Mục 0 của `PROMPTS_PLAYBOOK.md`)
+- **Tính năng / Task:** `Chưa có — chờ người dùng giao tính năng web mới`
+- **Spec:** `docs/specs/<ngày>-<tính-năng>.md` (chép từ `toolbox/templates/WEB_SPEC.md`)
+- **Nhánh / Worktree:** `main`
+- **Điều phối:** `Antigravity (Gemini Pro — 25%)`
+- **Code chính:** `Codex (GPT Pro — 65%)`
+- **Architect:** `Claude (Claude Pro — ≤10%)`
 
 ---
 
-## 3. Tiến độ Chi tiết theo Playbook (Checklist)
-- [x] Bước 1: Phỏng vấn người dùng & tổng hợp đầy đủ vào `PLAYBOOK.md`
-- [x] Bước 2: Xây dựng `toolbox/` (scripts, reusable game modules, templates, index) và gắn link quy định vào `PLAYBOOK.md`
-- [x] Bước 3: Triển khai Game HTML 2D Grid/Merge + Card Roguelike và đối chiếu 10/10 tiêu chuẩn trong Checklist của `PLAYBOOK.md`
-- [x] Bước 4: Đóng gói bản Portable Starter Kit v2.0 ra `C:\Users\Admin\orca\multi-agent-starter-kit` & `.zip`
+## 2. Tóm tắt ngữ cảnh
+- **Bộ kit:** [`PLAYBOOK.md`](./PLAYBOOK.md), [`AGENTS.md`](./AGENTS.md), [`CLAUDE.md`](./CLAUDE.md), [`GEMINI.md`](./GEMINI.md), [`PROMPTS_PLAYBOOK.md`](./PROMPTS_PLAYBOOK.md), [`FEATURE_SPEC_TEMPLATE.md`](./FEATURE_SPEC_TEMPLATE.md), [`MULTI_AGENT_CHECKLIST.md`](./MULTI_AGENT_CHECKLIST.md).
+- **Toolbox:** [`toolbox/docs/TOOLBOX_INDEX.md`](./toolbox/docs/TOOLBOX_INDEX.md) — scripts `verify-all.cmd`, `handoff-status.cmd`, `new-worktree.cmd`; template [`WEB_SPEC.md`](./toolbox/templates/WEB_SPEC.md).
+- **Stack:** Next.js 15 (App Router) + React 19 + TypeScript strict + Tailwind 4 + Vitest.
+- **Code web hiện có:** `src/types/index.ts`, `src/server/taskService.ts`, `src/app/api/tasks/route.ts`, `src/hooks/useAgentTasks.ts`, `src/components/ui/AgentDashboard.tsx`, `tests/taskService.test.ts`.
+- **Di sản game (chờ dọn, chưa xóa):** `src/game/`, `src/types/game.ts`, `src/components/ui/TacticalGridGame.tsx` (đang được `src/app/page.tsx` import), `tests/gameEngine.test.ts`, `toolbox/modules/` (soundSynth, storageManager, tweenParticles). Việc dọn là một task riêng cho Codex, phải giữ `verify-all` xanh.
 
 ---
 
-## 4. Trạng thái Đang làm dở (Current State / In-Progress)
-- **File vừa hoàn thành**: Toàn bộ `PLAYBOOK.md`, `toolbox/*`, `src/game/engine.ts`, `src/components/ui/TacticalGridGame.tsx`, `tests/gameEngine.test.ts`
-- **File đang sửa dở**: `Không có`
-- **Ghi chú bàn giao cho Agent kế tiếp**:
-  - Sẵn sàng mở rộng thêm thẻ bài mới, hiệu ứng Boss đặc biệt, hoặc bản đồ Roguelike theo nhánh.
+## 3. Tiến độ (Checklist theo Playbook)
+- [ ] Bước 1: Antigravity gom yêu cầu, ghi mục tiêu + file cần sửa vào đây
+- [ ] Bước 2: Claude (hoặc Failsafe) viết spec + chốt `src/types/`
+- [ ] Bước 3: Codex code `src/server/`, `src/app/api/`, `src/hooks/` + `tests/`
+- [ ] Bước 4: Antigravity dựng UI `src/app/`, `src/components/ui/`
+- [ ] Bước 5: `verify-all.cmd` xanh + đối chiếu Checklist Mục 4 `PLAYBOOK.md`
+
+---
+
+## 4. Trạng thái đang làm dở
+- **File vừa hoàn thành:** bộ tài liệu đã chuyển từ game sang web (v3.0).
+- **File đang sửa dở:** không có.
+- **Bước tiếp theo:** người dùng giao tính năng web đầu tiên → dùng Prompt 0-1 (hoặc B-1 nếu vắng Antigravity) trong `PROMPTS_PLAYBOOK.md`.
+
+## 5. Cần quyết / chờ review
+- Không có.

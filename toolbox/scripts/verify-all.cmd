@@ -35,7 +35,7 @@ if %ERRORLEVEL% neq 0 (
   exit /b %ERRORLEVEL%
 )
 
-echo [3/4] Running Unit and Game Logic Tests (npm.cmd test)...
+echo [3/4] Running Unit Tests (npm.cmd test)...
 call npm.cmd test
 if %ERRORLEVEL% neq 0 (
   echo [ERROR] Unit tests failed!
