@@ -5,6 +5,7 @@ Mỗi lần làm tính năng mới cho Web trên **Orca**:
 1. Xem **Mục 0** để biết agent nào còn quota → chọn đúng **Chế độ** (0, A–F).
 2. Copy & Paste các prompt của chế độ đó theo thứ tự.
 3. Nếu một agent hết quota **giữa chừng** → nhảy tới **Mục 9 (Takeover)**.
+4. Cần ảnh/asset (icon, pixel art, minh họa, vector, animation) → **Mục 10 (Art, chế độ Art-1…Art-5)**.
 
 > Quy tắc chung cho mọi chế độ: trạng thái luôn nằm trong `HANDOFF.md` + Git (không nằm trong trí nhớ agent). Agent nào cũng phải cập nhật `HANDOFF.md` sau mỗi file hoàn thành, commit nhỏ trên nhánh riêng, và chạy `toolbox\scripts\verify-all.cmd` trước khi báo cáo.
 
@@ -306,3 +307,142 @@ Chế độ Failsafe Takeover → chuyển sang Chế độ [A/B/C/D/E/F] theo `
 3. Làm tiếp đúng mục "bước tiếp theo", không viết lại phần đã đúng.
 4. Chạy `toolbox\scripts\verify-all.cmd`, cập nhật `HANDOFF.md` rồi báo cáo.
 ```
+
+---
+
+## MỤC 10: 🖼️ Quy trình làm Art / Asset (5 chế độ)
+
+Dùng khi web/game cần ảnh: icon, pixel art, minh họa, vector, animation. Chọn chế độ theo agent còn quota, giống Mục 0.
+
+| Chế độ art | Còn quota | Ý tưởng + phác thảo + điều phối | Vẽ raster (pixel, minh họa, sprite) | Vẽ vector / vector động (mã SVG) | Nhập, chuẩn hóa, tích hợp vào web |
+|---|---|---|---|---|---|
+| **Art-1 — Chuẩn** | Cả 3 | **Claude** | Antigravity | Codex | Codex |
+| **Art-2 — Thiếu Antigravity** | Codex + Claude | **Claude** | **Bạn** vẽ trong ChatGPT/Gemini bằng prompt Claude soạn (hoặc Codex nếu có công cụ tạo ảnh) | Codex | Codex |
+| **Art-3 — Thiếu Codex** | AG + Claude | **Claude** | Antigravity | Antigravity | Antigravity |
+| **Art-4 — Vắng Claude** | AG + Codex | **Antigravity** (ghi "brief chưa qua Claude") | Antigravity | Codex | Codex |
+| **Art-5 — Chỉ Claude** | Chỉ Claude | **Claude** | **Bạn** vẽ trong chat bằng prompt Claude soạn | **Claude** viết SVG trực tiếp | Bạn chạy lệnh nhập; Claude chỉ review |
+
+### 10.0 Luật chung cho mọi chế độ art
+
+- **Một bản brief duy nhất:** `docs/art/ART_BRIEF.md`, gồm phong cách, chuẩn kỹ thuật và bảng asset. Các bộ asset ghi trong `docs/art/<set>.json` dạng `[{ "id", "label", "kind", "subject", "status": "todo|generated|approved" }]`. Ảnh đặt ở `public/art/<set>/<id>.(webp|svg)`.
+- **Có 5 loại `kind`:**
+  - `pixel`: 16–128px, nền trong suốt, ≤ 24 màu, hiển thị với CSS `image-rendering: pixelated`.
+  - `illustration`: tối đa 1024px, WebP.
+  - `vector`: SVG đã làm sạch.
+  - `vector-anim`: SVG có CSS `@keyframes`, chỉ animate `transform`, `opacity`, `fill`, `stroke`; cấm SMIL; phải có `prefers-reduced-motion`.
+  - `sprite`: dải khung ngang.
+- **Giữ cùng phong cách:** vẽ **cả bộ trong một ảnh lưới** (pixel 4×4, minh họa 2×2) rồi cắt ra. Mỗi ô phải lớn ít nhất gấp đôi kích thước ảnh cuối. Lô sau phải đính kèm tấm ghép các ảnh đã duyệt.
+- **Animation nhân vật:** ưu tiên làm `vector-anim` rồi chụp ra `sprite` (bake). Chỉ vẽ sprite thẳng bằng AI khi chuyển động vượt mức rối giấy.
+- **Viết `subject` cụ thể:** ghi rõ thời đại, trang phục và chi tiết nhận diện; cấm những thứ hay vẽ sai ("no modern clothing, no guns"); không có chữ trong ảnh.
+- **Trạng thái:** game chỉ hiện ảnh có status `approved`. Chỉ **Bạn** được duyệt; agent dừng ở `generated`.
+- **Cấm vẽ tay bù khi hết quota công cụ tạo ảnh.** Gặp 429 thì dừng, commit phần đã có, báo id còn thiếu, rồi chuyển chế độ theo bảng 10.6.
+- **SVG từ AI phải làm sạch:** bỏ `script`, `on*`, `foreignObject`, `<image>`, link ngoài, `javascript:`; chỉ cho `href="#…"` nội bộ. Hiển thị qua `<img src>`, không chèn SVG thẳng vào DOM.
+- **Duyệt bằng tấm ghép:** phóng to 3×, có id dưới mỗi ô. Dự án có bộ công cụ `art:*` thì dùng `art:prompt` / `art:import` / `art:sheet` / `art:bake` / `art:check`. Không có thì agent chuẩn hóa bằng `sharp` theo đúng chuẩn trong brief.
+- **Vẫn giữ quy tắc chung:** worktree và nhánh riêng (`agy/<set>-art`, `codex/<set>-art`); không push/merge/deploy khi Bạn chưa đồng ý; không đưa key vào code, log hay chat.
+
+### 📋 Prompt ART-BRIEF → agent điều phối: Viết `docs/art/ART_BRIEF.md` (dùng ở mọi chế độ)
+```text
+Viết `docs/art/ART_BRIEF.md` cho [web/game]: [mô tả ngắn, đối tượng chơi, cảm giác muốn có].
+Gồm:
+1. Phong cách: 1 câu "style" tiếng Anh dùng chung cho mọi prompt (góc nhìn, nét, bảng màu, ánh sáng); 3 điều cấm (vd. đồ hiện đại khi chủ đề cổ).
+2. Bảng asset: id | tên | kind | kích thước | subject (tiếng Anh, cụ thể, có chi tiết nhận diện) | ghi chú animation.
+3. Chuẩn kỹ thuật theo kind (Mục 10.0) + dung lượng tối đa mỗi file.
+4. Phác thảo: với 3–5 asset quan trọng nhất, mô tả bố cục bằng chữ (hoặc khung ASCII); với vector-anim, liệt kê bộ phận chuyển động và chuyển động của từng bộ phận.
+5. Chia lô: lô nào vẽ trong lưới nào, ai vẽ (theo chế độ art hiện tại).
+Ghi `docs/art/<set>.json` (status "todo"). Cập nhật `HANDOFF.md` mục "Art: chế độ [Art-x], brief xong". Hỏi tôi duyệt brief trước khi giao vẽ.
+```
+
+### 📋 Prompt ART-CHAT → dán vào ChatGPT/Gemini (raster) hoặc Claude/ChatGPT (SVG)
+
+**Lưới raster:**
+```text
+Create ONE square image: a [R]×[C] grid of equal square cells, thin light-gray grid lines, plain white background.
+Each cell contains exactly one subject, centered, filling about 80% of the cell. No text, no letters, no numbers, no watermark.
+Style for every cell: [style trong brief]. All cells share the same style, scale, lighting and viewpoint.
+Cells, left to right, top to bottom:
+1. [subject]
+2. [subject]
+```
+Sửa một ô: `Redraw only cell [n]: [góp ý]. Keep every other cell exactly the same.` · Lô sau: đính kèm tấm ghép đã duyệt + `Match the exact style of the attached sheet.`
+
+**Dải sprite:**
+```text
+Create ONE image: a horizontal strip of [N] equal frames, plain white background, no grid lines.
+The same character in every frame ([subject]), same size, feet on the same ground line, [chuyển động]. Style: [style]. No text.
+```
+
+**SVG / SVG động:**
+```text
+Write SVG code. For each icon put a line <!-- id: [id] --> then one <svg viewBox="0 0 [W] [H]">.
+Flat shapes, at most [8] colors, bold shapes (must read at 48px). No text, no <image>, no script, no external links.
+[Chỉ vector-anim:] Animate with CSS @keyframes in one <style>: transform, opacity, fill, stroke only. Each moving part is a <g id="…"> with transform-box: fill-box and transform-origin. Seamless loop ≤ [1–4]s. No SMIL. Include @media (prefers-reduced-motion: reduce) { * { animation: none !important } }.
+Put everything in ONE code block.
+- [id]: [subject + chuyển động]
+```
+
+### 10.1 Art-1 — Chuẩn (Claude ý tưởng + điều phối • Antigravity vẽ raster • Codex vẽ vector + nhập + tích hợp)
+
+1. **→ Claude:** Prompt ART-BRIEF. Bạn duyệt brief.
+2. **→ Antigravity** (raster):
+```text
+Chế độ Art-1. Đọc `docs/art/ART_BRIEF.md` và `docs/art/<set>.json`. Làm trong worktree + nhánh `agy/<set>-art`.
+Vẽ các asset kind pixel/illustration/sprite bằng công cụ tạo ảnh của bạn, theo lưới và lô ghi trong brief, đúng câu style chung. KHÔNG vẽ tay bù, KHÔNG gọi API key.
+Ảnh hiện đồ hiện đại khi chủ đề cổ, có chữ, hoặc không nhận ra → vẽ lại trước khi lưu.
+Lưu ảnh lưới gốc vào `.art/raw/` (không commit). Để Codex cắt/chuẩn hóa, hoặc tự chạy lệnh `art:import` nếu dự án có.
+Hết quota: dừng, commit phần đã có, ghi id còn thiếu vào `HANDOFF.md`.
+Không sửa `src/**`. Không push/merge/deploy. Báo cáo kết bằng "chờ review".
+```
+3. **→ Codex** (vector + nhập + tích hợp, chạy song song với bước 2, khác file):
+```text
+Chế độ Art-1. Đọc `docs/art/ART_BRIEF.md`, `docs/art/<set>.json`, `HANDOFF.md`. Nhánh `codex/<set>-art`.
+1. Viết SVG cho asset kind vector/vector-anim theo brief (mỗi bộ phận chuyển động là một <g id>, CSS @keyframes, có prefers-reduced-motion, không SMIL). Làm sạch SVG theo Mục 10.0.
+2. Nhập ảnh lưới Antigravity để trong `.art/raw/`: cắt ô (chừa lề 6%), bỏ nền trắng, chuẩn hóa theo kind, ghi `public/art/<set>/<id>.*`, status "generated". Sprite: neo giữa-đáy, cùng bảng màu cho mọi khung. vector-anim cần sprite thì bake bằng trình duyệt chạy ngầm.
+3. Xuất tấm ghép `.art/sheet-<set>.png` (+ `.art/preview-<set>.html` cho animation).
+4. Tích hợp: component hiển thị chỉ dùng asset "approved", có fallback; precache nếu web có service worker; test kiểm kích thước, dung lượng, SVG sạch.
+Chạy `toolbox\scripts\verify-all.cmd`. Không push/merge/deploy. Báo "chờ review".
+```
+4. **→ Claude:** `Review tấm ghép .art/sheet-<set>.png theo brief: liệt kê id lệch phong cách, sai chủ đề, không nhận ra; viết lại subject cho các id đó.` Vòng lặp bước 2–4 chỉ với các id được nêu.
+5. **Bạn** duyệt → đổi status sang `approved` → merge → deploy.
+
+### 10.2 Art-2 — Thiếu Antigravity (Claude điều phối • Bạn vẽ raster trong chat • Codex vector + nhập + tích hợp)
+
+1. **→ Claude:** Prompt ART-BRIEF, thêm dòng: `Soạn luôn các prompt ART-CHAT cho từng lô raster để tôi dán vào ChatGPT/Gemini.`
+2. **Bạn:** dán từng prompt vào ChatGPT hoặc Gemini, góp ý ngay trong chat tới khi ưng, tải ảnh lưới về `.art/raw/<set>-batch-<n>.png`.
+3. **→ Codex:** dùng prompt của bước 3 trong Art-1, đổi dòng đầu thành "Chế độ Art-2" và bỏ phần chờ Antigravity. Nếu Codex có công cụ tạo ảnh thì có thể vẽ raster thay Bạn (cùng luật như Antigravity).
+4. Review và duyệt: giống bước 4–5 của Art-1.
+
+### 10.3 Art-3 — Thiếu Codex (Claude điều phối • Antigravity vẽ cả raster lẫn vector, nhập, tích hợp)
+
+1. **→ Claude:** Prompt ART-BRIEF.
+2. **→ Antigravity:** dùng prompt của bước 2 trong Art-1, đổi thành "Chế độ Art-3" và thêm phần việc 1–4 của Codex ở Art-1 (vector, nhập, tấm ghép, tích hợp). Chia thành 2 commit: `feat: <set> art` và `feat: integrate <set> art`.
+3. **→ Claude:** review tấm ghép, và thêm 1 lượt review diff phần tích hợp (chỉ đọc `git diff --stat` và file component).
+4. Bạn duyệt → merge → deploy.
+
+### 10.4 Art-4 — Vắng Claude (Antigravity ý tưởng + điều phối • Antigravity vẽ raster • Codex vector + nhập + tích hợp)
+
+1. **→ Antigravity:** Prompt ART-BRIEF, thêm: `Ghi "brief chưa qua Claude review" vào HANDOFF.md.`
+2. **→ Antigravity** (raster) và **→ Codex** (vector, nhập, tích hợp): dùng prompt của bước 2 và 3 trong Art-1, đổi thành "Chế độ Art-4".
+3. **Review chéo thay Claude:** Codex xem tấm ghép raster, Antigravity xem SVG và animation (mở `.art/preview-<set>.html`). Mỗi bên ghi id cần sửa vào `HANDOFF.md`.
+4. Bạn duyệt → merge → deploy. Khi Claude có quota lại: Prompt R-1, chỉ review brief và tấm ghép.
+
+### 10.5 Art-5 — Chỉ Claude (phạm vi tối thiểu)
+
+```text
+Chế độ Art-5 (chỉ Claude, phạm vi tối thiểu). Viết `docs/art/ART_BRIEF.md` + `docs/art/<set>.json` gọn (tối đa [N] asset).
+1. Vector / vector-anim: tự viết SVG trực tiếp vào `public/art/<set>/<id>.svg` theo luật Mục 10.0, status "generated".
+2. Raster: soạn prompt ART-CHAT theo lô để tôi tự vẽ trong ChatGPT/Gemini. Nếu dự án có `art:import` thì đưa tôi lệnh nhập; nếu không, ghi rõ bước chuẩn hóa còn lại vào `HANDOFF.md` cho Codex/Antigravity làm sau.
+3. Không viết code tích hợp. Ghi "Art-5: còn tích hợp + nhập raster" vào `HANDOFF.md` rồi dừng.
+```
+Khi tôi gửi tấm ghép, chỉ review và viết lại subject cho các id hỏng.
+
+### 10.6 Hết quota giữa chừng khi đang làm art
+
+| Hết quota | Chuyển sang | Ghi chú |
+|---|---|---|
+| Công cụ tạo ảnh của Antigravity | Art-2 (Bạn vẽ phần raster còn lại trong chat) | Dùng tấm ghép đã duyệt làm ảnh mẫu để giữ phong cách |
+| Antigravity | Art-2 | |
+| Codex | Art-3 | Antigravity nhận phần nhập và tích hợp |
+| Claude | Art-4 | Ghi "brief chưa qua Claude" |
+| Codex + Antigravity | Art-5 | |
+
+Paste cho agent tiếp quản: dùng Bước 3 của Mục 9, thay "Chế độ [A–F]" bằng "Chế độ [Art-x] theo Mục 10".
